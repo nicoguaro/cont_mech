@@ -1,0 +1,587 @@
+/*               COPYRIGHT NOTICE
+
+Copyright (C) 2012 Nicolas Guarin Zapata
+
+This program is free software; you can redistribute
+it and/or modify it under the terms of the
+GNU General Public License as published by
+the Free Software Foundation.
+
+This program is distributed in the hope that it
+will be useful, but WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details at
+http://www.gnu.org/copyleft/gpl.html
+*/
+
+/*
+****************************************************
+*        CONTINUUM MECHANICS PACKAGE V.0.1         *
+****************************************************
+*                                                  *
+****************************************************
+*                                                  *
+****************************************************
+*/
+
+
+load(draw)$
+
+/*
+Computes the gradient of a scalar function
+
+Input:
+        f:  (Expresion) scalar function.
+        x:  (List) coordinates (Cartesian, Polar or Spherical).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+*/
+grad(f,x,coordsys):= 
+if coordsys="cartesian" then(
+    makelist(diff(f,x[k]), k, 1, 3)
+)elseif coordsys="polar" then(
+    [diff(f,x[1]),1/x[1]*diff(f,x[2]),diff(f,x[3])]
+)elseif coordsys="spherical" then(
+    [diff(f,x[1]),1/x[1]*diff(f,x[2]),1/(x[1]*sin(x[2]))*diff(f,x[3])]
+)else("Coordinate system not supported")$
+
+
+/* 
+Computes the gradient of a vectorial function.
+
+Input:
+        u:  (List) vector valued function with 3 components.
+        x:  (List) coordinates (Cartesian, Polar or Spherical).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+*/
+vec_grad(u,x,coordsys):=
+if coordsys="cartesian" then(
+    genmatrix(lambda([i,j], grad(u[i],x,coordsys)[j]), 3, 3)
+)elseif coordsys="polar" then(
+    matrix(
+        [diff(u[1],x[1]),diff(u[2],x[1]),diff(u[3],x[1])],
+        [1/x[1]*(diff(u[1],x[2]) - u[2]),1/x[1]*(u[1] + diff(u[2],x[2])),1/x[1]*diff(u[3],x[2])],
+        [diff(u[1],x[3]),diff(u[2],x[3]),diff(u[3],x[3])]
+    )
+)elseif coordsys="spherical" then(
+    matrix(
+        [diff(u[1],x[1]),diff(u[2],x[1]),diff(u[3],x[1])],
+
+        [1/x[1]*(diff(u[1],x[2]) - u[2]),1/x[1]*(u[1] + diff(u[2],x[2])),1/x[1]*diff(u[3],x[2])],
+
+        [1/(x[1]*sin(x[2]))*(diff(u[1],x[3]) - u[3]*sin(x[2])),
+         1/(x[1]*sin(x[2]))*(diff(u[2],x[3]) - u[3]*cos(x[2])),
+         1/(x[1]*sin(x[2]))*(diff(u[3],x[3]) + u[1]*sin(x[2]) + u[2]*cos(x[2]))]
+    )
+)else("Coordinate system not supported")$
+
+
+
+/*
+Divergence of a vectorial function
+*/
+div(u,x,coordsys):=if coordsys="cartesian" then(
+    sum(diff(u[i],x[i]),i,1,3)
+)elseif coordsys="polar" then(
+    1/x[1]*(diff(r*u[1],x[1])+diff(u[2],x[2])+r*diff(u[3],x[3]))
+)elseif coordsys="spherical" then(
+    2*u[1]/x[1] + diff(u[1],x[1]) + 1/(x[1]*sin(x[2]))*diff(u[2]*sin(x[2]),x[2])+1/(x[1]*sin(x[2]))*diff(u[3],x[3])
+)else("Coordinate system not supported")$
+
+
+
+/* 
+Divergence of a tensorial function
+
+Input:
+        A:  (3x3 Matrix) tensor valued function.
+        x:  (List) coordinates (Cartesian, Polar or Spherical).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+*/
+tensor_div(A,x,coordsys):=if coordsys="cartesian" then(
+    makelist(sum(diff(A[i,k],x[k]),k,1,3),i,1,3)
+)elseif coordsys="polar" then(
+    [diff(A[1,1],x[1]) + 1/x[1]*diff(A[2,1],x[2]) + diff(A[3,1],x[3]) + 1/x[1]*(A[1,1]-A[2,2]),
+     diff(A[1,2],x[1]) + 1/x[1]*diff(A[2,2],x[2]) + diff(A[3,2],x[3]) + 1/x[1]*(A[1,2]+A[2,1]),
+     diff(A[1,3],x[1]) + 1/x[1]*diff(A[2,3],x[2]) + diff(A[3,3],x[3]) + 1/x[1]*(A[1,3])]
+)elseif coordsys="spherical" then(
+    [diff(A[1,1],x[1]) + 1/x[1]*diff(A[2,1],x[2]) + 1/(x[1]*sin(x[2]))*diff(A[3,1],x[3]) + 
+    1/x[1]*(2*A[1,1]-A[2,2]-A[3,3]+A[2,1]*cot(x[2])),
+
+     diff(A[1,2],x[1]) + 1/x[1]*diff(A[2,2],x[2]) + diff(A[3,2],x[3]) + 1/x[1]*(A[1,2]+A[2,1]),
+
+     diff(A[1,3],x[1]) + 1/x[1]*diff(A[2,3],x[2]) + diff(A[3,3],x[3]) + 1/x[1]*(A[1,3])]
+)else("Coordinate system not supported")$
+
+
+/* 
+Curl of a vectorial function
+
+Input:
+        u:  (List) vector valued function with 3 components.
+        x:  (List) coordinates (Cartesian, Polar or Spherical).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+*/
+curl(u,x,coordsys):=if coordsys="cartesian" then(
+    [diff(u[3],x[2])-diff(u[2],x[3]), diff(u[1],x[3])-diff(u[3],x[1]), diff(u[2],x[1])-diff(u[1],x[2])]
+
+)elseif coordsys="polar" then(
+    [1/x[1]*diff(u[3],x[2])-diff(u[2],x[3]),
+     diff(u[1],x[3])-diff(u[3],x[1]),
+     1/x[1]*(diff(x[1]*u[2],x[1])-diff(u[1],x[2]))]
+
+)elseif coordsys="spherical" then(
+    [1/(x[1]*sin(x[2]))*(diff(sin(x[2])*u[3],x[2])-diff(u[2],x[3])),
+
+     1/(x[1]*sin(x[2]))*diff(u[1],x[2])  + 1/x[1]*diff(r*A[1,2]),
+
+     1/x[1]*(diff(x[1]*u[2],x[1])-diff(u[1],x[2]))]
+)else("Coordinate system not supported")$
+
+
+
+/* 
+Laplacian
+
+Input:
+        f:  (Expresion) scalar function.
+        x:  (List) coordinates (Cartesian, Polar or Spherical).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+*/
+laplacian(f,x,coordsys):=div(grad(f,x,coordsys),x,coordsys)$
+
+
+
+/* 
+Vectorial Laplacian
+
+Input:
+        u:  (List) vector valued function with 3 components.
+        x:  (List) coordinates (Cartesian, Polar or Spherical).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+*/
+vec_laplacian(u,x,coordsys):=tensor_div(vec_grad(u,x,coordsys),x,coordsys)$
+
+
+
+/*
+Displacement to Strain operator. It is the symmetric part of the gradient.
+
+Input:
+        u:  (List) vector valued function with 3 components.
+        x:  (List) coordinates (Cartesian, Polar or Spherical).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+*/
+disp2strain(u,x,coordsys):=1/2*(vec_grad(u,x,coordsys)+transpose(vec_grad(u,x,coordsys)))$
+
+
+/* 
+Displacement to rotation operator. It is the antisymmetric part of the gradient.
+
+Input:
+        u:  (List) vector valued function with 3 components.
+        x:  (List) coordinates (Cartesian, Polar or Spherical).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+ */
+disp2rot(u,x,coordsys):=1/2*(vec_grad(u,x,coordsys)-transpose(vec_grad(u,x,coordsys)))$
+
+
+/*
+Navier operator
+*/
+navier_op(u,x,coordsys):=(Lambda + mu)*grad(div(u,x,coordsys),x,coordsys) + mu*vec_laplacian(u,x,coordsys)$
+
+
+
+/*
+Compute the trace of a tensor
+*/
+trace(M):=sum(M[i,i],i,1,matrix_size(M)[1]);
+
+
+/*
+Compute the I invariants of a tensor
+*/
+I_invariants(M):=[trace(M),trace(M.M)-(trace(M)^2),determinant(M)];
+
+
+/*
+Identity tensor
+*/
+identity(n):=genmatrix(lambda([i,j], if i=j then 1 else 0), 3, 3);
+
+/*
+Volumetric part of a tensor
+*/
+vol_part(M):=1/3*trace(M)*identity(3);
+
+/*
+Deviatoric part of a tensor
+*/
+dev_part(M):=M-vol_part(M);
+
+/*
+Norm of a vector
+*/
+norm(u):=sqrt(u.u);
+
+
+/*
+Cross product of two cartesian vectors
+*/
+cross(u,v):=[u[2]*v[3] - u[3]*v[2], u[3]*v[1] - u[1]*v[3], u[1]*v[2] - u[2]*v[1]]$
+
+/*
+Plot the Mohr's circle for a 2D symmetric tensor
+*/
+mohr_circle2D(A):=block([radii, center_x,xmin,xmax,ymin,ymax],
+
+    radii:sqrt(1/4*(A[1,1] -A[2,2])^2 + A[1,2]^2),
+    center_x:1/2*(A[1,1] + A[2,2]),
+
+    if radii=0 then(
+        xmin: center_x - 1,
+        xmax: center_x + 1,
+        ymin: -1,
+        ymax: 1,
+
+    wxdraw2d(
+
+
+       /* Principal values */
+       color         = black,
+       point_type    = 7,
+       point_size    = 2,
+       points_joined = false,
+       points([[center_x - radii,0],[center_x + radii,0]]),
+
+       /* Labels for principal values */
+       label_alignment   = center,
+       color             = black,
+       label(["{/Symbol s}_{min}",center_x - 0.2,0]),
+       label(["{/Symbol s}_{max}",center_x + 0.2,0]),
+
+       /* Plotting parameters */
+       dimensions = [600, 600],
+       grid = true,
+       ylabel = "{/Symbol t}",
+       xlabel = "{/Symbol s}",
+       xrange      = [xmin,xmax],
+       yrange      = [ymin,ymax] )
+
+    )else(
+        xmin: center_x-1.5*radii,
+        xmax: center_x+1.5*radii,
+        ymin: -1.5*radii,
+        ymax: 1.5*radii,
+
+    wxdraw2d(
+
+       /* Circle */
+       transparent = true,
+       line_width  = 2,
+       ellipse(center_x,0,radii,radii,0,360),  /* center (x,y), a, b, start & end in degrees */
+       
+       /* Diameter */
+       color         = black,
+       point_type    = 7,
+       point_size    = 2,
+       points_joined = true,
+       points([[A[1,1],-A[1,2]],[A[2,2],A[1,2]]]),
+
+       /* Labels for points in the Circle */
+       label_alignment   = center,
+       color             = black,
+       label(["A",A[1,1],-A[1,2]+0.15*radii]),
+       label(["B",A[2,2],A[1,2]+0.15*radii]),
+
+       /* Principal values */
+       color         = black,
+       point_type    = 7,
+       point_size    = 2,
+       points_joined = false,
+       points([[center_x - radii,0],[center_x + radii,0]]),
+
+       /* Labels for principal values */
+       label_alignment   = center,
+       color             = black,
+       label(["{/Symbol s}_{min}",center_x - 1.2*radii,0]),
+       label(["{/Symbol s}_{max}",center_x + 1.2*radii,0]),
+
+       /* Plotting parameters */
+       dimensions = [600, 600],
+       grid = true,
+       ylabel = "{/Symbol t}",
+       xlabel = "{/Symbol s}",
+       xrange      = [xmin,xmax],
+       yrange      = [ymin,ymax] )
+
+    )
+
+)$
+
+
+/*
+Convert from matrix notation to Voigt's notation
+*/
+mat2voigt(M):=[M[1,1],M[2,2],M[3,3],M[2,3],M[1,3],M[1,2]]$
+
+/*
+Convert from Voigt's notation to matrix notation
+*/
+voigt2mat(M_Voigt):=matrix([M_Voigt[1],M_Voigt[6],M_Voigt[5]],
+       [M_Voigt[6],M_Voigt[2],M_Voigt[4]],
+       [M_Voigt[5],M_Voigt[4],M_Voigt[3]])$
+
+
+
+/*
+Stiffness tensor in Voigt's notation
+*/
+stiffness_tensor(case):=
+    if case="3D" then(
+        E/(1+nu)/(1-2*nu)*matrix(
+         [1-nu,nu,nu,0,0,0], 
+         [nu,1-nu,nu,0,0,0], 
+         [nu,nu,1-nu,0,0,0], 
+         [0,0,0,1-2*nu,0,0], 
+         [0,0,0,0,1-2*nu,0], 
+         [0,0,0,0,0,1-2*nu]
+        )       
+    )elseif case="plane strain" then(
+        E/(1-2*nu)/(1+nu)*matrix(
+         [1-nu,nu,0], 
+         [nu,1-nu,0], 
+         [0,0,1-2*nu]
+        )
+    )elseif case="plane stress" then(
+        E/(1-nu^2)*matrix(
+         [1,nu,0], 
+         [nu,1,0], 
+         [0,0,1-nu]
+        )
+    )else("Case not supported")$
+
+
+
+/*
+Compliance tensor in Voigt's notation
+*/
+compliance_tensor(case):=
+    if case="3D" then(
+        1/E*matrix([1,-nu,-nu,0,0,0],
+             [-nu,1,-nu,0,0,0],
+             [-nu,-nu,1,0,0,0],
+             [0,0,0,nu+1,0,0],
+             [0,0,0,0,nu+1,0],
+             [0,0,0,0,0,nu+1]
+        )      
+    )elseif case="plane strain" then(
+        (1+nu)/E*matrix(
+        [1-nu,-nu,0],
+        [-nu,1-nu,0],
+        [0,0,1])
+    )elseif case="plane stress" then(
+       1/E*matrix(
+        [1,-nu,0],
+        [-nu,1,0],
+        [0,0,nu+1])
+    )else("Case not supported")$
+
+
+/*
+Conversion from elastic constants
+*/
+
+/* K*/
+
+elastic_prop[K,E,G]: K = E*G/(3*(3*G-E));
+elastic_prop[K,G,E]: K = E*G/(3*(3*G-E));
+
+elastic_prop[K,E,nu]: K = E/(3*(1-2*nu));
+elastic_prop[K,nu,E]: K = E/(3*(1-2*nu));
+
+elastic_prop[K,G,nu]: K = 2*G*(1+nu)/(3*(1-2*nu));
+elastic_prop[K,nu,G]: K = 2*G*(1+nu)/(3*(1-2*nu));
+
+elastic_prop[K,Lambda,nu]: K = Lambda + 2*G/3;
+elastic_prop[K,nu,Lambda]: K = Lambda + 2*G/3;
+
+elastic_prop[K,G,Lambda]: K = 2*G*(1+nu)/(3*(1-2*nu));
+elastic_prop[K,Lambda,G]: K = 2*G*(1+nu)/(3*(1-2*nu));
+
+elastic_prop[K,G,M]: K = M - 4*G/3;
+elastic_prop[K,M,G]: K = M - 4*G/3;
+
+/* E */
+
+elastic_prop[E,K,Lambda]: E = 9*K*(K-Lambda)/(3*K-Lambda);
+elastic_prop[E,Lambda,K]: E = 9*K*(K-Lambda)/(3*K-Lambda);
+
+elastic_prop[E,K,G]: E = 9*K*G/(2*K+G);
+elastic_prop[E,G,K]: E = 9*K*G/(2*K+G);
+
+elastic_prop[E,K,nu]: E = 2*K*(1-2*nu);
+elastic_prop[E,nu,K]: E = 2*K*(1-2*nu);
+
+elastic_prop[E,G,nu]: E = 2*G*(1+nu);
+elastic_prop[E,nu,G]: E = 2*G*(1+nu);
+
+elastic_prop[E,G,Lambda]: E = G*(3*Lambda+2*G)/(Lambda+G);
+elastic_prop[E,Lambda,G]: E = G*(3*Lambda+2*G)/(Lambda+G);
+
+elastic_prop[E,G,M]: E = G*(3*M-4*G)/(M-2*G);
+elastic_prop[E,M,G]: E = G*(3*M-4*G)/(M-2*G);
+
+/* Lambda */
+
+elastic_prop[Lambda,K,E]: Lambda = 3*K(3*K-E)/(9*K-E);
+elastic_prop[Lambda,E,K]: Lambda = 3*K(3*K-E)/(9*K-E);
+
+elastic_prop[Lambda,K,G]: Lambda = K - 2*G/3;
+elastic_prop[Lambda,G,K]: Lambda = K - 2*G/3;
+
+elastic_prop[Lambda,K,nu]: Lambda = 3*K*nu/(1+nu);
+elastic_prop[Lambda,nu,K]: Lambda = 3*K*nu/(1+nu);
+
+elastic_prop[Lambda,E,G]: Lambda = G*(E-2*G)/(3*G-E);
+elastic_prop[Lambda,G,E]: Lambda = G*(E-2*G)/(3*G-E);
+
+elastic_prop[Lambda,E,nu]: Lambda = E*nu/(1+nu)/(1-2*nu);
+elastic_prop[Lambda,nu,E]: Lambda = E*nu/(1+nu)/(1-2*nu);
+
+elastic_prop[Lambda,G,nu]: Lambda = 2*G*nu/(1-2*nu);
+elastic_prop[Lambda,nu,G]: Lambda = 2*G*nu/(1-2*nu);
+
+elastic_prop[Lambda,G,M]: Lambda = M-2*G;
+elastic_prop[Lambda,M,G]: Lambda = M-2*G;
+
+/* G */
+
+elastic_prop[G,K,E]: G = 3*K*E/(9*K-E);
+elastic_prop[G,E,K]: G = 3*K*E/(9*K-E);
+
+elastic_prop[G,K,Lambda]: G = 3*(K-Lambda)/2;
+elastic_prop[G,Lambda,K]: G = 3*(K-Lambda)/2;
+
+elastic_prop[G,K,nu]: G = 3*K*(1-2*nu)/(2*(1+nu));
+elastic_prop[G,nu,K]: G = 3*K*(1-2*nu)/(2*(1+nu));
+
+elastic_prop[G,E,nu]: G = E/(2*(1+nu));
+elastic_prop[G,nu,E]: G = E/(2*(1+nu));
+
+elastic_prop[G,Lambda,nu]: G = Lambda*(1-2*nu)/(2*nu);
+elastic_prop[G,nu,Lambda]: G = Lambda*(1-2*nu)/(2*nu);
+
+/* nu */
+
+elastic_prop[nu,K,E]: nu = (3*K-E)/(6*K);
+elastic_prop[nu,K,E]: nu = (3*K-E)/(6*K);
+
+elastic_prop[nu,K,Lambda]: nu = Lambda/(3*K-Lambda);
+elastic_prop[nu,Lambda,K]: nu = Lambda/(3*K-Lambda);
+
+elastic_prop[nu,K,G]: nu = (3*K-2*G)/2/(3*K+G);
+elastic_prop[nu,G,K]: nu = (3*K-2*G)/2/(3*K+G);
+
+elastic_prop[nu,E,G]: nu = E/2/G - 1;
+elastic_prop[nu,G,E]: nu = E/2/G - 1;
+
+elastic_prop[nu,G,Lambda]: nu = Lambda/2/(Lambda+G);
+elastic_prop[nu,Lambda,G]: nu = Lambda/2/(Lambda+G);
+
+elastic_prop[nu,G,M]: nu = (M-2*G)/2/(M-G);
+elastic_prop[nu,M,G]: nu = (M-2*G)/2/(M-G);
+
+/* M */
+
+elastic_prop[M,K,E]: M = 3*K*(3*K+E)/(9*K-E);
+elastic_prop[M,E,K]: M = 3*K*(3*K+E)/(9*K-E);
+
+elastic_prop[M,K,Lambda]: M = 3*K - 2*Lambda;
+elastic_prop[M,Lambda,K]: M = 3*K - 2*Lambda;
+
+elastic_prop[M,K,G]: M = K + 4*G/3;
+elastic_prop[M,G,K]: M = K + 4*G/3;
+
+elastic_prop[M,K,nu]: M = 3*K*(1-nu)/(1+nu);
+elastic_prop[M,nu,K]: M = 3*K*(1-nu)/(1+nu);
+
+elastic_prop[M,E,G]: M = G*(4*G-E)/(3*G-E);
+elastic_prop[M,G,E]: M = G*(4*G-E)/(3*G-E);
+
+elastic_prop[M,E,nu]: M = E*(1-nu)/(1+nu)/(1-2*nu);
+elastic_prop[M,nu,E]: M = E*(1-nu)/(1+nu)/(1-2*nu);
+
+elastic_prop[M,G,Lambda]: M = Lambda + 2*G;
+elastic_prop[M,Lambda,G]: M = Lambda + 2*G;
+
+elastic_prop[M,nu,Lambda]: M = Lambda*(1-nu)/nu;
+elastic_prop[M,Lambda,nu]: M = Lambda*(1-nu)/nu;
+
+elastic_prop[M,G,nu]: M = 2*G*(1-nu)/(1-2*nu);
+elastic_prop[M,nu,G]: M = 2*G*(1-nu)/(1-2*nu);

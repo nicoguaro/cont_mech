@@ -1,0 +1,414 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 11.08.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Path for Linux
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+load("/media/Info/Dropbox/Docencia/Mecanica del Medio Continuo/Maxima_pack/cont_mech.mac");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Path for Windows
+
+load("G:/Nico/Dropbox/Docencia/Mecanica del Medio Continuo/Maxima_pack/cont_mech.mac");
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: section start ]
+Gradient of a scalar function
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+Computes the gradient of a scalar function
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+grad(a*b*c,[a,b,c],"polar");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+grad(r^n,[r,phi,theta],"spherical");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Gradient of a vectorial function
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+Computes the gradient of a vectorial function
+
+
+Spherical coordinates
+
+r (radius)- phi (azimuthal angle) - theta (elevation angle)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+vec_grad([r,0,0],[r,p,t],"spherical");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vec_grad(r^n*[r,0,0],[r,p,t],"spherical");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Divergence of a vectorial function
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+div([x,y,z],[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+div([x^2+y*z,y^2+x*z,z^2+x*y],[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+div(cross([x,y,z],[a,a,a]),[x,y,z],"cartesian"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+div([r,0,0]/r^3,[r,phi,theta],"spherical");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+div([r,0,z]/(r^2+z^2)^(3/2),[r,phi,z],"polar"),factor;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Divergence of a tensorial function
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+tensor_div(matrix(
+ [E11(r,z),0,0], 
+ [0,E22(r,z),0], 
+ [0,0,0]),[r,theta,z],"polar");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Curl of a vectorial function
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: section start ]
+Laplacian
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+uu:[u1,u2,u3];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+v:depends(uu,[x,y,z]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vec_laplacian(v,[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Displacement to strains/rotations
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: section start ]
+Mohr Circle
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+A:matrix([1,0],[0,-1])$
+mohr_circle2D(A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+A:matrix([1,3],[3,-5])$
+mohr_circle2D(A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Examples
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: subsect start ]
+Rotating cylinder
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+A long rotating cylinder has as displacement field
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+uu:[rho*omega^2*(1+nu)*(1-2*nu)/8/E/(1-nu)*r*((3-2*nu)*R^2-r^2),0,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+If we apply the Navier operator to this displacement field, obtain
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+aux:navier_op(uu,[r,theta,z],"polar");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+and replacing the values for mu and lambda, get
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([mu=rhs(elastic_prop[G,E,nu]),elastic_prop[Lambda,E,nu]]
+      ,aux
+),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+That is exactly the negative of the centrifugal force, considered as body force in this problem.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: subsect start ]
+Sphere deformed by its own weight
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+The displacement field is
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+uu:[-g*rho*R*(1+nu)*(1-2*nu)/10/E/(1-nu)*r*((3-nu)/(1+nu)-r^2/R^2),0,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+To verify that this is the solution, let's apply the Navier operator to get the negative body forces
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([mu=rhs(elastic_prop[G,E,nu]),elastic_prop[Lambda,E,nu]],navier_op(uu,[r,phi,theta],"spherical")),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+And we can verify computing
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+e:disp2strain(uu,[r,phi,theta],"spherical"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+s:Lambda*div(uu,[r,phi,theta],"spherical")*identity(3) + 2*mu*e,ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sigma:subst([mu=E/2/(1+nu),Lambda=E*nu/(1+nu)/(1-2*nu)],s),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tensor_div(sigma,[r,phi,theta],"spherical"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+Cantilever beam
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+A cantilever 
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+v:[(1/G-nu/E)*P*y^3/6/I + (L^2/E - x^2/E - c^2/G)*P*y/2/I,
+   nu*P*x*y^2/2/E/I + P*x^3/6/E/I - P*L^2*x/2/E/I + P*L^3/3/E/I,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+sol:navier_op(v,[x,y,z],"cartesian"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([mu=rhs(elastic_prop[G,nu,E]),elastic_prop[Lambda,nu,E]],sol),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+(Lambda + mu)*grad(div(v,[x,y,z],"cartesian"),[x,y,z],"cartesian"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+div(v,[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+mu*vec_laplacian(v,[x,y,z],"cartesian"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C:stiffness_tensor("plane stress");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+aux:C.[-(x*y*P)/(E*I),(nu*x*y*P)/(E*I),((y^2-c^2)*P)/(4*G*I)],ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst([G=E/2/(1+nu)],aux),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+This is exactly the same solution proposed by Timoshenko for stresses.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C:stiffness_tensor("3D");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S:C.mat2voigt(disp2strain(v,[x,y,z],"cartesian"))$
+subst([elastic_prop[G,E,nu]],S),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+..
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+For the given displacements field
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+u:[a*(x1^2-5*x2^2),2*a*x1*x2,0];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Find:
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: subsect start ]
+Strain tensor
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+We can find the strain tensor by
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+epsilon:disp2strain(u,[x1,x2,x3],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+Principal strains
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+The principal strains are the eigenvalues of the strain tensor
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+eigenvalues(epsilon)[1];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+The directions for this strains are
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+eigenvectors(epsilon)[2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+For a given shear modulus G, what value should take the Young modulus
+for the solid to be in equilibrium
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+C:stiffness_tensor("3D")$
+sigma:voigt2mat( list_matrix_entries(C.mat2voigt(epsilon))),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+tensor_div(sigma,[x1,x2,x3],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+And the first component should be zero
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+expr:solve(tensor_div(sigma,[x1,x2,x3],"cartesian")[1]=0,nu);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+G=subst(expr,E/2/(1+nu));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+u:[-nu*gamma/E*z*x,
+   -nu*gamma/E*z*y,
+   gamma*z^2/2/E + gamma*nu/2/E*(x^2+y^2)-gamma/2/E*H^2];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e:disp2strain(u,[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C:stiffness_tensor("3D")$
+C.mat2voigt(e),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
