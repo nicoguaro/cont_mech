@@ -10,13 +10,13 @@ Path for Linux
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-load("/media/Info/Dropbox/Docencia/Mecanica del Medio Continuo/Maxima_pack/cont_mech.mac");
+load("/media/Info/workspace/cont_mech/cont_mech.mac");
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
 Path for Windows
 
-load("G:/Nico/Dropbox/Docencia/Mecanica del Medio Continuo/Maxima_pack/cont_mech.mac");
+load("G:/....");
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: section start ]
@@ -409,6 +409,10 @@ e:disp2strain(u,[x,y,z],"cartesian");
 C:stiffness_tensor("3D")$
 C.mat2voigt(e),ratsimp;
 /* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
