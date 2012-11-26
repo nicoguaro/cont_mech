@@ -165,9 +165,9 @@ curl(u,x,coordsys):=if coordsys="cartesian" then(
 )elseif coordsys="spherical" then(
     [1/(x[1]*sin(x[2]))*(diff(sin(x[2])*u[3],x[2])-diff(u[2],x[3])),
 
-     1/(x[1]*sin(x[2]))*diff(u[1],x[2])  + 1/x[1]*diff(r*A[1,2]),
+     1/x[1]*(1/sin(x[2])*diff(u[1],x[3])  - diff(x[1]*u[3],x[1])),
 
-     1/x[1]*(diff(x[1]*u[2],x[1])-diff(u[1],x[2]))]
+     1/x[1]*(diff(x[1]*u[2],x[1]) - diff(u[1],x[2]))]
 )else("Coordinate system not supported")$
 
 

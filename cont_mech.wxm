@@ -6,7 +6,18 @@ kill(all);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
-Path for Linux
+In order to get the package working in a worksheet we need to define the absolute path
+to the file "cont_mech.mac".
+
+
+Path example for Linux/Mac OS
+
+/media/Info/workspace/cont_mech/cont_mech.mac
+
+
+Path for Windows
+
+G:/workspace/cont_mech/cont_mech.mac
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -14,9 +25,7 @@ load("/media/Info/workspace/cont_mech/cont_mech.mac");
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
-Path for Windows
 
-load("G:/....");
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: section start ]
@@ -30,10 +39,6 @@ Computes the gradient of a scalar function
 /* [wxMaxima: input   start ] */
 grad(a*b*c,[a,b,c],"polar");
 /* [wxMaxima: input   end   ] */
-
-/* [wxMaxima: comment start ]
-
-   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
 grad(r^n,[r,phi,theta],"spherical");
@@ -50,14 +55,6 @@ Computes the gradient of a vectorial function
 Spherical coordinates
 
 r (radius)- phi (azimuthal angle) - theta (elevation angle)
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: comment start ]
-
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: comment start ]
-
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -116,14 +113,6 @@ tensor_div(matrix(
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
-Curl of a vectorial function
-   [wxMaxima: section end   ] */
-
-/* [wxMaxima: comment start ]
-
-   [wxMaxima: comment end   ] */
-
-/* [wxMaxima: section start ]
 Laplacian
    [wxMaxima: section end   ] */
 
@@ -136,11 +125,67 @@ uu:[u1,u2,u3];
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-v:depends(uu,[x,y,z]);
+vv:depends(uu,[x,y,z]);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: input   start ] */
-vec_laplacian(v,[x,y,z],"cartesian");
+vec_laplacian(vv,[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: section start ]
+Curl of a vectorial function
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: comment start ]
+Curl of a scalar gradient
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+curl(gradient(f(x,y,z),[x,y,z],"cartesian"),[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Verify the vectorial identity
+curl(phi*A) = phi*curl(A) * grad(phi) x A
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+curl(f(x,y,z)*[u(x,y,z),v(x,y,z),w(x,y,z)],[x,y,z],"cartesian") - 
+f(x,y,z)* curl([u(x,y,z),v(x,y,z),w(x,y,z)],[x,y,z],"cartesian") - 
+cross(grad(f(x,y,z),[x,y,z],"cartesian"),[u(x,y,z),v(x,y,z),w(x,y,z)]),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Verify the vectorial identity
+curl(curl(A)) = grad(div(A)) - laplacian(A)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+curl(curl([u(x,y,z),v(x,y,z),w(x,y,z)],[x,y,z],"cartesian"),[x,y,z],"cartesian") - 
+grad(div([u(x,y,z),v(x,y,z),w(x,y,z)],[x,y,z],"cartesian"),[x,y,z],"cartesian") + 
+vec_laplacian([u(x,y,z),v(x,y,z),w(x,y,z)],[x,y,z],"cartesian"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Verify the vectorial identity
+curl(A x B) = grad(div(A)) - laplacian(A)
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+curl(curl([u(x,y,z),v(x,y,z),w(x,y,z)],[x,y,z],"cartesian"),[x,y,z],"cartesian") - 
+grad(div([u(x,y,z),v(x,y,z),w(x,y,z)],[x,y,z],"cartesian"),[x,y,z],"cartesian") + 
+vec_laplacian([u(x,y,z),v(x,y,z),w(x,y,z)],[x,y,z],"cartesian"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Verify the vectorial identity
+curl(r) = [0,0,0]
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+curl([x,y,z],[x,y,z],"cartesian");
+curl([r,0,z],[r,theta,z],"polar");
+curl([r,0,0],[r,theta,phi],"spherical");
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
