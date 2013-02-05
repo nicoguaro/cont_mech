@@ -1,6 +1,6 @@
 /*               COPYRIGHT NOTICE
 
-Copyright (C) 2012 Nicolas Guarin Zapata
+Copyright (C) 2013 Nicolas Guarin Zapata
 
 This program is free software; you can redistribute
 it and/or modify it under the terms of the
@@ -21,6 +21,10 @@ http://www.gnu.org/copyleft/gpl.html
 ****************************************************
 *                                                  *
 ****************************************************
+*                                                  *
+*  Created by:    Nicolas Guarin                   *
+*  Last modified: January, 29th 2013               *
+*             by: Nicolas Guarin                   *
 *                                                  *
 ****************************************************
 */
@@ -209,6 +213,27 @@ Spherical coordinates (coordsys = "spherical"):
 r (radius) - phi (azimuthal angle) - theta (elevation angle)
 */
 vec_laplacian(u,x,coordsys):=tensor_div(vec_grad(u,x,coordsys),x,coordsys)$
+
+/* 
+Biharmonic operator - just for 2D
+
+Input:
+        f:  (Expresion) scalar function that depends on two variables.
+        x:  (List) coordinates (Cartesian, Polar).
+        cooordsys:  (String) coordinate system.
+
+Cartesian coordinates (coordsys = "cartesian"):
+
+Polar coordinates (coordsys = "polar"):
+r (in-plane distance) - theta (azimuthal angle) - z (out of plane distance)
+
+Spherical coordinates (coordsys = "spherical"):
+r (radius) - phi (azimuthal angle) - theta (elevation angle)
+
+Example of use:
+    biharmonic_op(u(r,t),[r,t,p],"polar")
+*/
+biharmonic_op(f,x,coordsys) := expand(laplacian(laplacian(f,x,coordsys),x,coordsys))$
 
 
 
