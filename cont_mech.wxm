@@ -1,5 +1,5 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 12.01.0 ] */
+/* [ Created with wxMaxima version 12.04.0 ] */
 
 /* [wxMaxima: title   start ]
 Continuum Mechanics Package
@@ -7,8 +7,6 @@ Continuum Mechanics Package
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: comment start ]
-
-
 
    [wxMaxima: comment end   ] */
 
@@ -32,7 +30,7 @@ G:/workspace/cont_mech/cont_mech.mac
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-load("D:/workspace/cont_mech/cont_mech.mac");
+load("U:/ANDES/Nicolas/workspace/cont_mech/cont_mech.mac");
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -267,6 +265,41 @@ equation.
 
 /* [wxMaxima: input   start ] */
 biharmonic_op(phi,[r,theta,z],"polar");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+biharmonic_op(theta,[r,theta,z],"polar");
+biharmonic_op(r^2*theta,[r,theta,z],"polar");
+biharmonic_op(r*theta*cos(theta),[r,theta,z],"polar");
+biharmonic_op(r*theta*sin(theta),[r,theta,z],"polar");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+We can try the general solution by Michell in
+
+[1] J. H. Michell, 1899, On the direct determination of stress in an elastic solid,
+ with application to the theory of plates, Proceedings of the London Mathematical
+ Society, vol. 31, pages 100-124.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+phi(r,theta,N):= A[0]*r^2 + B[0]*r^2*log(r) + C[0]*log(r) + D[0]*theta
++   (A[1]*r + B[1]/r + Bp[1]*r*theta + C[1]*r^3 + D[1]*r*log(r))*cos(theta)
++   (E[1]*r + F[1]/r + Fp[1]*r*theta + G[1]*r^3 + H[1]*r*log(r))*sin(theta)
++  sum((A[n]*r^n + B[n]/r^n  + C[n]*r^(n+2) + D[n]*r^(-n+2))*cos(n*theta),n,2,N)
++  sum((E[n]*r^n + F[n]/r^n  + G[n]*r^(n+2) + H[n]*r^(-n+2))*sin(n*theta),n,2,N);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+biharmonic_op(phi(r,theta,10),[r,theta,z],"polar");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(C);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+kill(phi);
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
