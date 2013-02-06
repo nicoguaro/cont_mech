@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/gpl.html
 ****************************************************
 *                                                  *
 *  Created by:    Nicolas Guarin                   *
-*  Last modified: January, 29th 2013               *
+*  Last modified: February, 5th 2013               *
 *             by: Nicolas Guarin                   *
 *                                                  *
 ****************************************************
@@ -215,11 +215,11 @@ r (radius) - phi (azimuthal angle) - theta (elevation angle)
 vec_laplacian(u,x,coordsys):=tensor_div(vec_grad(u,x,coordsys),x,coordsys)$
 
 /* 
-Biharmonic operator - just for 2D
+Biharmonic operator 
 
 Input:
         f:  (Expresion) scalar function that depends on two variables.
-        x:  (List) coordinates (Cartesian, Polar).
+        x:  (List) coordinates (Cartesian, Polar, Spherical).
         cooordsys:  (String) coordinate system.
 
 Cartesian coordinates (coordsys = "cartesian"):
