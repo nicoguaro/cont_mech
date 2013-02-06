@@ -1,5 +1,16 @@
 /* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
-/* [ Created with wxMaxima version 11.08.0 ] */
+/* [ Created with wxMaxima version 12.01.0 ] */
+
+/* [wxMaxima: title   start ]
+Continuum Mechanics Package
+    Nicolas Guarin      
+   [wxMaxima: title   end   ] */
+
+/* [wxMaxima: comment start ]
+
+
+
+   [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
 kill(all);
@@ -21,7 +32,7 @@ G:/workspace/cont_mech/cont_mech.mac
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
-load("/media/Info/workspace/cont_mech/cont_mech.mac");
+load("D:/workspace/cont_mech/cont_mech.mac");
 /* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: comment start ]
@@ -117,7 +128,15 @@ Laplacian
    [wxMaxima: section end   ] */
 
 /* [wxMaxima: comment start ]
+Scalar Laplacian of a function
+   [wxMaxima: comment end   ] */
 
+/* [wxMaxima: input   start ] */
+laplacian(sin(x)*cos(y)*(1+z*y),[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+Vectorial Laplacian of a function
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -195,6 +214,60 @@ Displacement to strains/rotations
 /* [wxMaxima: comment start ]
 
    [wxMaxima: comment end   ] */
+
+/* [wxMaxima: section start ]
+Biharmonic operator
+   [wxMaxima: section end   ] */
+
+/* [wxMaxima: subsect start ]
+Airy stress function for a plate with 
+remote stress load
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+The stress function for a plate with a hole with remote constant
+tensile loading.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+phi: k1*log(r) + k2*r^2*log(r) + k3*r^2 + D;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+where ki are constants.
+This function is a stress function if it satisfies the biharmonic
+equation.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+biharmonic_op(phi,[r,theta,z],"polar");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: subsect start ]
+Airy stress function for a plate with 
+remote stress load
+   [wxMaxima: subsect end   ] */
+
+/* [wxMaxima: comment start ]
+The stress function for a plate with a hole with remote shear
+loading SS is
+
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+phi: (k1*r^2 + k2*r^4 + k3/r^2 + k4)*sin(2*theta);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: comment start ]
+where ki are constants.
+
+This function is a stress function if it satisfies the biharmonic
+equation.
+   [wxMaxima: comment end   ] */
+
+/* [wxMaxima: input   start ] */
+biharmonic_op(phi,[r,theta,z],"polar");
+/* [wxMaxima: input   end   ] */
 
 /* [wxMaxima: section start ]
 Mohr Circle
