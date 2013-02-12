@@ -297,7 +297,7 @@ I_invariants(M):=[trace(M),trace(M.M)-(trace(M)^2),determinant(M)];
 /*
 Identity tensor
 */
-identity(n):=genmatrix(lambda([i,j], if i=j then 1 else 0), 3, 3);
+identity(n):=genmatrix(lambda([i,j], if i=j then 1 else 0), n, n);
 
 /*
 Volumetric part of a tensor
