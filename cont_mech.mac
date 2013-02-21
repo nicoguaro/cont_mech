@@ -479,6 +479,19 @@ compliance_tensor(case):=
 
 
 /*
+Compute von Mises "stress" criterion for a stress state s.
+
+It takes the stress tensor in matrix notation for 3D. In the case of plane stress
+the 3rd column and row of the matrix are filled with zero. For plane strain the
+s33 value should be computed as
+
+s33 = nu*(s11 + s22)
+
+where nu is the Poisson coefficient.
+*/
+von_Mises(s):=sqrt(3/2*sum(sum(dev_part(s)[i,j]*dev_part(s)[i,j],i,1,3),j,1,3));
+
+/*
 Conversion from elastic constants
 */
 
