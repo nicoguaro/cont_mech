@@ -3,11 +3,20 @@
 
 /* [wxMaxima: title   start ]
 Continuum Mechanics Package Examples
-           Nicolas Guarin      
    [wxMaxima: title   end   ] */
 
 /* [wxMaxima: comment start ]
+cont_mech is a Maxima package intended to aid with operative issues in 
+Continuum Mechanics lecturing and research. I wrote this package when
+I was lecturing the course undergrad  course Mecanica de los Medios Continuos
+Introduction to Continuum Mechanics) for Civil Engineering at
+Universidad EAFIT.
 
+This wxMaxima document provide examples of the different capabilities of the
+package.
+
+Text provided under a Creative Commons Attribution license, CC-BY.
+Code provided under MIT License. (c) Nicolas Guarin Zapata, 2014
    [wxMaxima: comment end   ] */
 
 /* [wxMaxima: input   start ] */
@@ -370,6 +379,8 @@ mohr_circle2D(A);
 Examples
    [wxMaxima: section end   ] */
 
+/* [wxMaxima: fold    start ] */
+
 /* [wxMaxima: subsect start ]
 Rotating cylinder
    [wxMaxima: subsect end   ] */
@@ -516,6 +527,8 @@ subst([elastic_prop[G,E,nu]],S),ratsimp;
 
 /* [wxMaxima: fold    end   ] */
 
+/* [wxMaxima: fold    end   ] */
+
 /* [wxMaxima: section start ]
 ..
    [wxMaxima: section end   ] */
@@ -606,8 +619,6 @@ G=subst(expr,E/2/(1+nu));
 
    [wxMaxima: section end   ] */
 
-/* [wxMaxima: fold    start ] */
-
 /* [wxMaxima: comment start ]
 
    [wxMaxima: comment end   ] */
@@ -630,8 +641,6 @@ C.mat2voigt(e,"strain"),ratsimp;
 /* [wxMaxima: comment start ]
 
    [wxMaxima: comment end   ] */
-
-/* [wxMaxima: fold    end   ] */
 
 /* Maxima can't load/batch files which end with a comment! */
 "Created with wxMaxima"$
