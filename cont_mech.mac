@@ -1,18 +1,27 @@
 /*               COPYRIGHT NOTICE
 
-Copyright (C) 2013 Nicolas Guarin Zapata
+The MIT License (MIT)
 
-This program is free software; you can redistribute
-it and/or modify it under the terms of the
-GNU General Public License as published by
-the Free Software Foundation.
+Copyright (c) 2014 Nicolas Guarin Zapata
 
-This program is distributed in the hope that it
-will be useful, but WITHOUT ANY WARRANTY;
-without even the implied warranty of MERCHANTABILITY
-or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU General Public License for more details at
-http://www.gnu.org/copyleft/gpl.html
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
 */
 
 /*
@@ -425,7 +434,7 @@ References:
 
 [2] Stephan Puchegger (2005): Matrix and tensor notation in the theory of elasticity. <stephan.puchegger@ap.univie.ac.at.
 
-[3] P. Helnwein (2001). Some Remarks on the Compressed Matrix Representation of Symmetric Second-Order and Fourth-Order Tensors. Computer Methods in Applied Mechanics and Engineering, 190(22–23):2753–2770
+[3] P. Helnwein (2001). Some Remarks on the Compressed Matrix Representation of Symmetric Second-Order and Fourth-Order Tensors. Computer Methods in Applied Mechanics and Engineering, 190(22ï¿½23):2753ï¿½2770
 */
 mat2voigt(M,case):=
     if case="stress" then(
@@ -451,7 +460,7 @@ References:
 
 [2] Stephan Puchegger (2005): Matrix and tensor notation in the theory of elasticity. <stephan.puchegger@ap.univie.ac.at.
 
-[3] P. Helnwein (2001). Some Remarks on the Compressed Matrix Representation of Symmetric Second-Order and Fourth-Order Tensors. Computer Methods in Applied Mechanics and Engineering, 190(22–23):2753–2770
+[3] P. Helnwein (2001). Some Remarks on the Compressed Matrix Representation of Symmetric Second-Order and Fourth-Order Tensors. Computer Methods in Applied Mechanics and Engineering, 190(22ï¿½23):2753ï¿½2770
 */
 voigt2mat(M_Voigt,case):=
     if case="stress" then(
