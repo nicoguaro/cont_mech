@@ -1,0 +1,149 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 12.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load("U:/ANDES/Nicolas/workspace/cont_mech/cont_mech.mac");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+depends([u,v,w],[x,y,z]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+C:matrix(
+[c[11],c[12],c[13],c[14],c[15],c[16]],
+[c[12],c[22],c[23],c[24],c[25],c[26]],
+[c[13],c[23],c[33],c[34],c[35],c[36]],
+[c[14],c[24],c[34],c[44],c[45],c[46]],
+[c[15],c[25],c[35],c[45],c[55],c[56]],
+[c[16],c[26],c[36],c[46],c[56],c[66]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e:disp2strain([u,v,w],[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S:C.mat2voigt(e,"strain"),ratsimp$
+S: list_matrix_entries(S);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+S:voigt2mat(S,"stress");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ds: tensor_div(S, [x,y,z], "cartesian"),ratsimp;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vars: [u,v,w]$
+coords: [x, y, z]$
+incs: [[h[x],0,0], [0,h[y],0], [0,0,h[z]]]$
+steps: [h[x], h[y], h[z]]$
+subst_list: []$
+for i:1 thru 3 do(
+    var: vars[i],
+    for j:1 thru 3 do(        
+        coord: coords[j],
+        inc: incs[j],
+        h1: steps[j],
+        subst_list: append(subst_list, ['diff(var,coord,2)=1/(2*h1)*
+        (var[x + inc[1],y + inc[2],z + inc[3]] - 
+         var[x - inc[1],y - inc[2],z - inc[3]])])
+    )
+);
+subst_list2: []$
+for i:1 thru 3 do(
+    var: vars[i],
+    for j:1 thru 3 do(
+        coord1: coords[j],
+        inc1: incs[j],
+        h1: steps[j],
+        for k:j+1 thru 3 do(
+            coord2: coords[k], 
+            inc2: incs[k],
+            h2: steps[k],
+            if is(equal(j,2)) and is(equal(k,3)) then(                
+                subst_list2: append(subst_list2, ['diff(var,coord1,1,coord2,1)=1/(4*h1*h2)*
+                    ( var[x,y + inc1[2],z + inc2[3]]
+                    - var[x,y + inc1[2],z - inc2[3]]
+                    - var[x,y - inc1[2],z + inc2[3]]
+                    + var[x,y - inc1[2],z - inc2[3]])]),
+                subst_list2: append(subst_list2, ['diff(var,coord2,1,coord1,1)=1/(4*h1*h2)*
+                    ( var[x,y + inc1[2],z + inc2[3]]
+                    - var[x,y + inc1[2],z - inc2[3]]
+                    - var[x,y - inc1[2],z + inc2[3]]
+                    + var[x,y - inc1[2],z - inc2[3]])])
+
+      
+            )else(
+                subst_list2: append(subst_list2, ['diff(var,coord1,1,coord2,1)=1/(4*h1*h2)*
+                    ( var[x + inc1[1],y + inc2[2],z + inc2[3]]
+                    - var[x + inc1[1],y - inc2[2],z - inc2[3]]
+                    - var[x - inc1[1],y + inc2[2],z + inc2[3]]
+                    + var[x - inc1[1],y - inc2[2],z - inc2[3]])]),
+                subst_list2: append(subst_list2, ['diff(var,coord1,2,coord2,1)=1/(4*h1*h2)*
+                    ( var[x + inc1[1],y + inc2[2],z + inc2[3]]
+                    - var[x + inc1[1],y - inc2[2],z - inc2[3]]
+                    - var[x - inc1[1],y + inc2[2],z + inc2[3]]
+                    + var[x - inc1[1],y - inc2[2],z - inc2[3]])])
+
+
+            )       
+        )           
+    )
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+ds1d: ratsimp(subst(append(subst_list, subst_list2), ds[1]))$
+ds2d: ratsimp(subst(append(subst_list, subst_list2), ds[2]))$
+ds3d: ratsimp(subst(append(subst_list, subst_list2), ds[3]))$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq1: ut[x,y,z] = u[x,y,z] + 1/rho*dt**2*ds1d$
+aux1: subst([ut[x,y,z]=u*exp(%i*a*(t + dt))*exp(%i*kx*x)*exp(%i*ky*y)*exp(%i*kz*z)],eq1)$
+eq2: vt[x,y,z] = v[x,y,z] + 1/rho*dt**2*ds2d$
+aux2: subst([ut[x,y,z]=u*exp(%i*a*(t + dt))*exp(%i*kx*x)*exp(%i*ky*y)*exp(%i*kz*z)],eq2)$
+eq3: wt[x,y,z] = w[x,y,z] + 1/rho*dt**2*ds3d$
+aux3: subst([ut[x,y,z]=u*exp(%i*a*(t + dt))*exp(%i*kx*x)*exp(%i*ky*y)*exp(%i*kz*z)],eq3)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+vars: [u,v,w]$
+mult: [-1,0,1]$
+subst_list: []$
+for i:1 thru 3 do(
+    var: vars[i],
+    for j:1 thru 3 do(
+        for k:1 thru 3 do(
+            for m:1 thru 3 do(
+                coord: [x + mult[j]*h[x], y + mult[k]*h[y], z + mult[m]*h[z]],
+                fac: exp(%i*kx*coord[1])*exp(%i*ky*coord[2])*exp(%i*kz*coord[3]),
+                subst_list: append(subst_list,[var[coord[1], coord[2], coord[3]]= var*exp(%i*a*t)*fac])
+            )
+        )  
+    )
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq1: subst(subst_list, aux1)$
+eq2: subst(subst_list, aux2)$
+eq3: subst(subst_list, aux3)$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eq1a: expand(eq1/exp(%i*a*t)/exp(%i*kx*x)/exp(%i*ky*y)/exp(%i*kz*z))$
+eq2a: expand(eq2/exp(%i*a*t)/exp(%i*kx*x)/exp(%i*ky*y)/exp(%i*kz*z))$
+eq3a: expand(eq3/exp(%i*a*t)/exp(%i*kx*x)/exp(%i*ky*y)/exp(%i*kz*z))$
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
