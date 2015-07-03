@@ -1,0 +1,178 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 12.04.0 ] */
+
+/* [wxMaxima: input   start ] */
+kill(all);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+load("U:/ANDES/Nicolas/workspace/cont_mech/cont_mech.mac");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+depends([S11, S22, S33, S12, S23, S13, u, v, w],[x,y,z,t]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+q:[S11, S22, S33, S12, S23, S13, u, v, w];
+coords:[x,y,z,t];
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+D:matrix(
+[c[11],c[12],c[13],c[14],c[15],c[16]],
+[c[12],c[22],c[23],c[24],c[25],c[26]],
+[c[13],c[23],c[33],c[34],c[35],c[36]],
+[c[14],c[24],c[34],c[44],c[45],c[46]],
+[c[15],c[25],c[35],c[45],c[55],c[56]],
+[c[16],c[26],c[36],c[46],c[56],c[66]]);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+e:disp2strain([u,v,w],[x,y,z],"cartesian");
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+rho*D.mat2voigt(e,"strain")$
+rhs: list_matrix_entries(%);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+matrix(
+[S11,S12,S13],
+[S12,S22,S23],
+[S13,S23,S33])$
+ds: tensor_div(%, [x,y,z], "cartesian")$
+rhs: append(rhs, ds);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+for i:1 thru 9 do(
+    var: q[i],
+    for j:1 thru 3 do(
+        coord: coords[j],
+        rhs: subst([diff(var,coord)= var[coord]], rhs)
+    
+    )
+);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+qx: diff(q,x)$
+for i:1 thru 9 do(
+    var: q[i],
+    for j:1 thru 3 do(
+        coord: coords[j],
+        qx: subst([diff(var,coord)= var[coord]], qx)
+    
+    )
+);
+A: genmatrix(lambda([i,j], diff(rhs[i],qx[j])), 9, 9)/rho;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+qy: diff(q,y)$
+for i:1 thru 9 do(
+    var: q[i],
+    for j:1 thru 3 do(
+        coord: coords[j],
+        qy: subst([diff(var,coord)= var[coord]], qy)
+    
+    )
+);
+B: genmatrix(lambda([i,j], diff(rhs[i],qy[j])), 9, 9)/rho;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+qz: diff(q,z)$
+for i:1 thru 9 do(
+    var: q[i],
+    for j:1 thru 3 do(
+        coord: coords[j],
+        qz: subst([diff(var,coord)= var[coord]], qz)
+    
+    )
+);
+C: genmatrix(lambda([i,j], diff(rhs[i],qz[j])), 9, 9)/rho;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expand(charpoly(A, x)/x^3)$
+poly1: subst([x^6=y^3, x^4=y^2, x^2=y], %);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expand(charpoly(B, x)/x^3)$
+poly2: subst([x^6=y^3, x^4=y^2, x^2=y], %);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+expand(charpoly(C, x)/x^3)$
+poly3: subst([x^6=y^3, x^4=y^2, x^2=y], %);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+transiso: [ c[22]=c[11], c[23]=c[13], c[55]=c[44],
+            c[14]=0, c[15]=0, c[16]=0,
+            c[24]=0, c[25]=0, c[26]=0,
+            c[34]=0, c[35]=0, c[36]=0,
+            c[45]=0, c[46]=0, c[56]=0]$
+Be_vals: [c[11]=292.3e9, c[33]=336.4e9, c[44]=162.5e9, c[12]=27.6e9, c[13]=14e9, rho=1850]$
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(transiso, A);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(transiso, poly1)$
+poly1_aux:subst(Be_vals, %);
+allroots(poly1_aux);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(transiso, poly1);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(transiso, poly2)$
+poly2_aux:subst(Be_vals, %);
+allroots(poly2_aux);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(transiso, poly3)$
+poly3_aux:subst(Be_vals, %);
+allroots(poly3_aux);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+subst(transiso, poly3);
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eigenvalues(subst(transiso,A));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eigenvalues(subst(transiso,B));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+eigenvalues(subst(transiso,C));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ap(n, A, B, C):= n[1]*A + n[2]*B + n[3]*C;
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ap2: subst(transiso,Ap([sqrt(2)/2,sqrt(2)/2,0], A, B, C));
+/* [wxMaxima: input   end   ] */
+
+/* [wxMaxima: input   start ] */
+Ap2: subst(transiso,Ap([1,2,0], A, B, C));
+/* [wxMaxima: input   end   ] */
+
+/* Maxima can't load/batch files which end with a comment! */
+"Created with wxMaxima"$
